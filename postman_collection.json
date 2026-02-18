@@ -1,0 +1,70 @@
+{
+  "info": {
+    "name": "U-Turn Ride Matching API",
+    "description": "Simple testing collection for U-Turn ride matching",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Root",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "Request Ride - Area 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": 1,\n  \"pickup_lat\": 23.8103,\n  \"pickup_lng\": 90.4125,\n  \"radius_km\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/ride/request",
+          "host": ["{{base_url}}"],
+          "path": ["api", "ride", "request"]
+        }
+      }
+    },
+    {
+      "name": "Request Ride - Area 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": 1,\n  \"pickup_lat\": 23.7808,\n  \"pickup_lng\": 90.4152,\n  \"radius_km\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/ride/request",
+          "host": ["{{base_url}}"],
+          "path": ["api", "ride", "request"]
+        }
+      }
+    }
+  ]
+}
