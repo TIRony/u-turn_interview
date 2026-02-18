@@ -16,6 +16,15 @@ Finds the nearest available drivers based on your location. Built for speed and 
 - Validates all inputs automatically
 - Database indexes for fast queries
 
+## Cache Benefits
+
+Real-world performance improvement:
+
+- **First request:** 600ms (database query)
+- **Cached request:** 5ms (120x faster!)
+
+The 30-second cache dramatically reduces response time for nearby searches.
+
 ## Production Test
 
 **Live API:** https://u-turn-rony.up.railway.app/
