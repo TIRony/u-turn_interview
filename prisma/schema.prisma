@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+        
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  phone      String   @unique
+  created_at DateTime @default(now())
+
+  @@index([phone])
+  @@map("users")
+}
+
+model Driver {
+  id            Int      @id @default(autoincrement())
+  name          String
+  is_available  Boolean  @default(true)
+  current_lat   Float
+  current_lng   Float
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  car           Car?
+
+  @@index([is_available])
+  @@index([current_lat, current_lng])
+  @@map("drivers")
+}
+
+model Car {
+  id           Int      @id @default(autoincrement())
+  driver       Driver   @relation(fields: [driver_id], references: [id], onDelete: Cascade)
+  driver_id    Int      @unique
+  model        String
+  plate_number String   @unique
+  created_at   DateTime @default(now())
+
+  @@index([driver_id])
+  @@map("cars")
+}
