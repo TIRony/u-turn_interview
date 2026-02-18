@@ -1,110 +1,98 @@
-# U-Turn - Ride Matching System
+# U-Turn - Driver Matching API
 
-A backend system that helps riders find nearby drivers quickly and efficiently.
+Finds the nearest available drivers based on your location. Built for speed and simplicity.
 
-## What is this?
+## Built With
 
-This is a ride-matching API that lets users request rides and instantly see all available drivers nearby. It calculates real distances using the Haversine formula and shows the closest drivers first.
+- **Node.js + Express** - API server
+- **PostgreSQL + Prisma** - Database
+- **Supabase** - Hosted PostgreSQL
 
-## Built with
+## Features
 
-- Node.js & Express
-- PostgreSQL with Prisma ORM
-- Supabase for database hosting
-- pnpm for package management
+- Finds drivers within your radius (e.g., 5km)
+- Sorts by distance (closest first)
+- **Smart caching** - Results cached for 30 seconds. Nearby searches get instant responses without hitting the database
+- Validates all inputs automatically
+- Database indexes for fast queries
 
-## What it does
+## Production Test
 
-- Finds available drivers within your specified search radius
-- Calculates accurate distances between locations
-- Returns drivers sorted from nearest to farthest
-- Validates all inputs to prevent errors
-- Handles errors gracefully with clear messages
-- Uses smart caching for better performance
-- Monitors request performance to catch slow queries
+**Live API:** https://u-turn-rony.up.railway.app/
 
-## Testing with Postman
+Test with Postman:
 
-I've included a Postman collection file to make testing super easy.
+1. Open Postman → **Import** button
+2. Upload `postman_collection.json`
+3. In the collection, change the base URL from `http://localhost:3000` to `https://u-turn-rony.up.railway.app`
+4. Send requests to test the live API
 
-**How to import and test:**
+## Dev Test
 
-1. Open Postman
-2. Click "Import" button (top left)
-3. Drag and drop `postman_collection.json` or click "Choose Files"
-4. You'll see "U-Turn Ride Matching API" collection appear
-5. Make sure your server is running (`pnpm dev`)
-6. Click any request → Hit "Send"
+Test locally with Postman:
 
-The collection has 3 requests:
-- **Root** - Check basic API info
-- **Request Ride - Area 1** - Test from Banani area
-- **Request Ride - Area 2** - Test from Gulshan area
+1. Make sure your server is running (`pnpm dev`)
+2. Open Postman → **Import** button
+3. Upload `postman_collection.json`
+4. Use the pre-configured requests (Area 1, Area 2)
+5. The collection uses `http://localhost:3000` by default
 
-That's it! No need to manually type requests or configure anything.
-
-## How the code is organized
-
-I've structured this project to be as clean and modular as possible. Each piece has its own job:
+## Project Structure
 
 ```
-U-Turn/
-├── prisma/
-│   ├── schema.prisma              # Database structure
-│   └── seed.js                    # Sample data to play with
-├── src/
-│   ├── config/                    # App settings and configs
-│   ├── controllers/               # Handles API requests
-│   ├── services/                  # Core business logic
-│   ├── repositories/              # Talks to the database
-│   ├── helpers/                   # Small utility functions
-│   ├── transformers/              # Formats data for responses
-│   ├── routes/                    # API endpoint definitions
-│   ├── middleware/                # Request processing
-│   ├── utils/                     # Shared helper tools
-│   └── server.js                  # Main entry point
-├── .env.example
-├── package.json
-└── README.md
+src/
+├── server.js              # Application entry point
+├── config/                # Configuration files
+│   ├── database.js        # Prisma client setup
+│   ├── constants.js       # App constants
+│   └── performance.js     # Performance settings
+├── controllers/           # Request handlers
+│   └── ride.controller.js
+├── services/              # Business logic
+│   └── ride.service.js
+├── middleware/            # Express middleware
+│   ├── validator.js       # Input validation
+│   ├── errorHandler.js    # Error handling
+│   └── performance.js     # Request tracking
+├── routes/                # API routes
+│   ├── index.js
+│   └── ride.routes.js
+└── utils/                 # Helper functions
+    ├── distance.js        # Haversine calculations
+    ├── cache.js          # Caching logic
+    └── responseFormatter.js
 ```
 
-## Getting started
-
-### What you'll need
-
-- Node.js (version 18 or newer)
-- A PostgreSQL database (Supabase)
-- pnpm or npm
-
-### Setup
+## Local Development
 
 **1. Clone and install**
+
 ```bash
-git clone <repository-url>
-cd U-Turn
+git clone <repo-url>
+cd u-turn
 pnpm install
 ```
 
-**2. Set up your environment**
+**2. Set up environment**
+
+Create `.env` file:
 
 ```env
-DATABASE_URL="postgresql://user:password@host:port/database"
+DATABASE_URL="your-postgresql-connection-string"
+NODE_ENV="development"
 PORT=3000
-NODE_ENV=development
 ```
 
-If you're using Supabase, just grab the connection string from your project settings.
-
-**3. Set up the database**
+**3. Set up database**
 
 ```bash
 # Generate Prisma client
 pnpm prisma:generate
 
-# Create database tables
+# Run migrations
 pnpm prisma:migrate
 
-# Add some test data (10 drivers around Dhaka)
+# Seed test data (10 drivers around Dhaka)
 pnpm prisma:seed
 ```
 
@@ -114,32 +102,32 @@ pnpm prisma:seed
 pnpm dev
 ```
 
-That's it! Your API should be running at `http://localhost:3000`
+Server runs at `http://localhost:3000`
 
-## Using the API
+## API Usage
 
-### Request a ride
+### Request a Ride
 
-Send a POST request with your location and search radius:
+**Endpoint:** `POST /api/ride/request`
 
-```bash
-curl -X POST http://localhost:3000/api/ride/request \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_id": 1,
-    "pickup_lat": 23.8103,
-    "pickup_lng": 90.4125,
-    "radius_km": 5
-  }'
+**Request:**
+
+```json
+{
+  "user_id": 1,
+  "pickup_lat": 23.8103,
+  "pickup_lng": 90.4125,
+  "radius_km": 5
+}
 ```
 
-**What you need to send:**
-- `user_id` - Your user ID (positive number)
-- `pickup_lat` - Your latitude (-90 to 90)
-- `pickup_lng` - Your longitude (-180 to 180)
-- `radius_km` - How far to search (0.1 to 100 km)
+**Parameters:**
+- `user_id` - Positive number
+- `pickup_lat` - Latitude (-90 to 90)
+- `pickup_lng` - Longitude (-180 to 180)
+- `radius_km` - Search radius (0.1 to 100 km)
 
-**What you'll get back:**
+**Response:**
 
 ```json
 {
@@ -169,108 +157,80 @@ curl -X POST http://localhost:3000/api/ride/request \
 }
 ```
 
-The drivers are sorted by distance - closest first.
+Drivers are sorted by distance (closest first).
 
-## How it works under the hood
+## How It Works
 
-When you make a request, here's what happens:
+1. **Validation** - Checks if inputs are valid
+2. **Cache check** - Returns cached results if available (30 second TTL)
+3. **User verification** - Confirms user exists
+4. **Bounding box filter** - Creates a rough box around your location to narrow the search
+5. **Database query** - Fetches available drivers in that area
+6. **Haversine calculation** - Calculates exact distances
+7. **Filter & sort** - Keeps only drivers within radius, sorts by distance
+8. **Cache & respond** - Saves results and sends response
 
-1. **Validation** - First, we check if your input makes sense (valid coordinates, reasonable radius, etc.)
+Typical response time: <50ms (thanks to caching and indexes)
 
-2. **Check the cache** - We look if someone recently searched the same area. If yes, we return cached results instantly.
+## Why This Structure?
 
-3. **User check** - We verify the user exists in our database.
+Each file has one clear purpose:
+- Easy to test individual pieces
+- Changes don't affect the whole codebase
+- New developers understand it quickly
+- Components are reusable
 
-4. **Smart filtering** - Instead of checking every driver in the database, we create a rough "bounding box" around your location. This narrows down the search area significantly.
+## Performance Optimizations
 
-5. **Database query** - We fetch only available drivers within that box.
+**Caching** - Search results cached 30s, user data 5min. Dramatically reduces database load for nearby searches.
 
-6. **Precise calculation** - Now we calculate the exact distance to each driver using the Haversine formula (which accounts for Earth's curvature).
+**Database indexes** - Queries stay fast even with thousands of drivers.
 
-7. **Sort and filter** - We keep only drivers within your exact radius and sort them by distance.
+**Bounding box** - Eliminates 90% of drivers before distance calculation.
 
-8. **Cache it** - We save these results for 30 seconds, so if someone else searches nearby, they get instant results.
+**Smart queries** - Only fetch fields we need.
 
-9. **Send response** - Finally, we format everything nicely and send it back to you.
+**Request tracking** - Logs slow requests (>1 second) for optimization.
 
-The whole process typically takes less than 50ms thanks to database indexes and caching.
+## Database Schema
 
-### Why this structure?
-
-I broke the code into small, focused components because:
-
-- Each file does one thing well
-- It's easier to test individual pieces
-- You can reuse components across features
-- Changes don't ripple through the entire codebase
-- New developers can understand what's happening quickly
-
-For example, if you want to change how distances are calculated, you only touch one file. If you want to add a new database table, you add a new repository file. Simple as that.
-
-## Performance tricks I used
-
-**Caching** - Search results are cached for 30 seconds, user data for 5 minutes. This dramatically reduces database load.
-
-**Database indexes** - Added indexes on driver availability and location fields. Queries are lightning fast even with thousands of drivers.
-
-**Bounding box optimization** - Before calculating exact distances, we eliminate 90% of drivers using a simple rectangular filter. Much faster than checking everyone.
-
-**Smart queries** - We only fetch the fields we actually need, not everything.
-
-**Request tracking** - Every request gets an ID and we log how long it takes. If something is slow (>1 second), we get a warning.
-
-## Database structure
-
-Here's what the database looks like:
-
-**Users table:**
+**Users**
 - id, name, phone, timestamps
 
-**Drivers table:**
-- id, name, is_available (boolean), current_lat, current_lng, timestamps
-- Indexes on: is_available, location fields
+**Drivers**
+- id, name, is_available, current_lat, current_lng, timestamps
+- Indexes: is_available, location fields
 
-**Cars table:**
+**Cars**
 - id, driver_id, model, plate_number, timestamps
-
-## Things to know
-
-- The seed data puts drivers around Dhaka for testing
-- Search results are cached for 30 seconds
-- In-memory cache works fine for single-server deployments
-- The Haversine formula is accurate enough for ride-hailing (error < 0.5%)
-- The 5km radius is a good default for cities
 
 ## Project Timeline
 
-**Total Time: ~8-10 hours**
+**Total: ~8-10 hours**
 
-Here's how I built this:
-
-**Phase 1: Setup & Planning (1 hour)**
-- Set up project structure
-- Configured Prisma with PostgreSQL/Supabase
-- Created database schema (Users, Drivers, Cars)
-- Planned API architecture
+**Phase 1: Setup (1 hour)**
+- Project structure
+- Database schema (Users, Drivers, Cars)
+- Prisma configuration
 
 **Phase 2: Core Development (4-5 hours)**
-- Built ride request endpoint with distance calculations
-- Implemented Haversine formula for accurate distances
-- Added bounding box optimization for performance
-- Set up validation middleware
-- Created proper error handling
+- Ride request endpoint
+- Haversine distance formula
+- Bounding box optimization
+- Validation & error handling
 
-**Phase 3: Optimization & Features (2-3 hours)**
-- Added in-memory caching system
-- Implemented performance monitoring
-- Database indexing for fast queries
-- Refactored into modular components (repositories, helpers, transformers)
-- Proper separation of concerns
+**Phase 3: Optimization (2-3 hours)**
+- Caching system
+- Performance monitoring
+- Database indexing
+- Modular refactoring
 
 **Phase 4: Testing & Polish (1-2 hours)**
-- Created seed data with realistic driver locations
-- Built Postman collection for easy testing
-- Cleaned up code (removed comments, simplified logs)
-- Wrote human-friendly README
-- Final testing and bug fixes
+- Seed data with realistic locations
+- Postman collection
+- Documentation
+- Final testing
+
 ---
+
+**Built by Rony** | [Production](https://u-turn-rony.up.railway.app/)
