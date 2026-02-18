@@ -23,6 +23,26 @@ This is a ride-matching API that lets users request rides and instantly see all 
 - Uses smart caching for better performance
 - Monitors request performance to catch slow queries
 
+## Testing with Postman
+
+I've included a Postman collection file to make testing super easy.
+
+**How to import and test:**
+
+1. Open Postman
+2. Click "Import" button (top left)
+3. Drag and drop `postman_collection.json` or click "Choose Files"
+4. You'll see "U-Turn Ride Matching API" collection appear
+5. Make sure your server is running (`pnpm dev`)
+6. Click any request → Hit "Send"
+
+The collection has 3 requests:
+- **Root** - Check basic API info
+- **Request Ride - Area 1** - Test from Banani area
+- **Request Ride - Area 2** - Test from Gulshan area
+
+That's it! No need to manually type requests or configure anything.
+
 ## How the code is organized
 
 I've structured this project to be as clean and modular as possible. Each piece has its own job:
@@ -213,26 +233,6 @@ Here's what the database looks like:
 **Cars table:**
 - id, driver_id, model, plate_number, timestamps
 
-## Testing with Postman
-
-I've included a Postman collection file to make testing super easy.
-
-**How to import and test:**
-
-1. Open Postman
-2. Click "Import" button (top left)
-3. Drag and drop `postman_collection.json` or click "Choose Files"
-4. You'll see "U-Turn Ride Matching API" collection appear
-5. Make sure your server is running (`pnpm dev`)
-6. Click any request → Hit "Send"
-
-The collection has 3 requests:
-- **Root** - Check basic API info
-- **Request Ride - Area 1** - Test from Banani area
-- **Request Ride - Area 2** - Test from Gulshan area
-
-That's it! No need to manually type requests or configure anything.
-
 ## Things to know
 
 - The seed data puts drivers around Dhaka for testing
@@ -273,18 +273,4 @@ Here's how I built this:
 - Cleaned up code (removed comments, simplified logs)
 - Wrote human-friendly README
 - Final testing and bug fixes
-
-**What took the most time:**
-- Getting the distance calculations right and optimized
-- Refactoring into clean, modular architecture
-- Making sure caching works properly
-- Writing clear documentation
-
-**What I'd improve with more time:**
-- Add Redis for distributed caching
-- WebSocket support for real-time driver updates
-- More comprehensive test suite
-- API rate limiting
-- Driver availability scheduling
-
 ---
